@@ -274,7 +274,7 @@ th:first-child {
 
 .resource-select,
 .custom-resource-input,
-.man-day-input,
+.personday-input,
 .unit-price-input,
 .remarks-input {
     width: 100%;
@@ -292,7 +292,7 @@ th:first-child {
 
 .resource-select:focus,
 .custom-resource-input:focus,
-.man-day-input:focus,
+.personday-input:focus,
 .unit-price-input:focus,
 .remarks-input:focus {
     border-color: var(--button-primary-bg);
@@ -304,7 +304,7 @@ th:first-child {
 .subtotal,
 .total-price,
 .week-total,
-.grand-total-manday,
+.grand-total-personday,
 .grand-total-price {
     font-weight: 600;
     background-color: var(--table-total-row-bg);
@@ -801,7 +801,7 @@ tbody tr:last-child td:last-child input {
 }
 
 /* 表格输入框样式强化 */
-[data-theme="dark"] .man-day-input,
+[data-theme="dark"] .personday-input,
 [data-theme="dark"] .unit-price-input,
 [data-theme="dark"] .remarks-input,
 [data-theme="dark"] .resource-select,

@@ -63,8 +63,8 @@ const translations = {
     },
     en: {
         // HTML元素
-        pageTitle: "Man-Day Cost Assessment Tool",
-        mainTitle: "Man-Day Cost Assessment Tool",
+        pageTitle: "Person-day Cost Assessment Tool",
+        mainTitle: "Person-day Cost Assessment Tool",
         projectYear: "Project Year:",
         startMonth: "Start Month:",
         projectDuration: "Duration (months):",
@@ -79,7 +79,7 @@ const translations = {
 
         // 表格相关
         consultantResource: "Consultant Resources",
-        subtotal: "Subtotal (Man-Days)",
+        subtotal: "Subtotal (Person-days)",
         unitPrice: "Unit Price",
         totalPrice: "Total Price",
         remarks: "Remarks",
@@ -113,11 +113,11 @@ const translations = {
 
         // Excel导出
         excel: {
-            worksheetName: "Man-Day Cost Assessment",
+            worksheetName: "Person-day Cost Assessment",
             holidaysRemark: "Legal Holidays: ",
             workdaysRemark: "Adjusted Workdays: ",
             generalRemark: "Remarks:",
-            filename: "Man-Day_Cost_Assessment.xlsx"
+            filename: "Person-day_Cost_Assessment.xlsx"
         }
     }
 };
@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('tbody tr:not(:last-child)').forEach(row => {
             const selectElement = row.querySelector('.resource-select');
             const customInput = row.querySelector('.custom-resource-input');
-            const manDayInputs = row.querySelectorAll('.man-day-input');
+            const manDayInputs = row.querySelectorAll('.personday-input');
             const unitPriceInput = row.querySelector('.unit-price-input');
             const remarksInput = row.querySelector('.remarks-input');
 
@@ -573,9 +573,9 @@ document.addEventListener('DOMContentLoaded', () => {
         tableHTML += `<tr><td class="sticky-total-cell"><strong>${grandTotalText}</strong></td>`; // First cell for "总计"
         // Loop for weekly totals
         for (let j = 0; j < totalWeeks; j++) {
-            tableHTML += `<td class="grand-total-week-manday" id="grand-total-week-${j}">0</td>`;
+            tableHTML += `<td class="grand-total-week-personday" id="grand-total-week-${j}">0</td>`;
         }
-        tableHTML += `<td class="grand-subtotal-manday" id="grand-subtotal-manday-total">0</td>`; // Grand total man-day for subtotal column
+        tableHTML += `<td class="grand-subtotal-personday" id="grand-subtotal-personday-total">0</td>`; // Grand total person-day for subtotal column
         tableHTML += `<td></td>`; // Empty cell under Unit Price
         tableHTML += `<td class="grand-total-price" id="grand-total-price-total">0</td>`; // Grand total price for total price column
         tableHTML += `<td><input type="text" class="remarks-input" data-row="total"></td>`; // Remarks cell
@@ -621,7 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (allWeeksData && allWeeksData[j]) {
                 manDayValue = allWeeksData[j].workingDays;
             }
-            rowHTML += `<td><input type="number" class="man-day-input" min="0" step="0.1" value="${manDayValue}" data-row="${rowIndex}" data-week="${j}"></td>`;
+            rowHTML += `<td><input type="number" class="personday-input" min="0" step="0.1" value="${manDayValue}" data-row="${rowIndex}" data-week="${j}"></td>`;
         }
 
         rowHTML += `<td class="subtotal" id="subtotal-${rowIndex}">0</td>`;
@@ -666,19 +666,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateTotals() {
-        let grandTotalManDay = 0;
+        let grandTotalPersonDay = 0;
         let grandTotalPrice = 0;
         const resourceRows = tableContainer.querySelectorAll('tbody tr:not(:last-child)');
 
         // Initialize weekly totals array
         const firstResourceRow = resourceRows[0];
-        const numberOfWeeks = firstResourceRow ? firstResourceRow.querySelectorAll('.man-day-input').length : 0;
+        const numberOfWeeks = firstResourceRow ? firstResourceRow.querySelectorAll('.personday-input').length : 0;
         const weeklyTotals = Array(numberOfWeeks).fill(0);
 
         resourceRows.forEach(row => {
             const rowIndex = row.dataset.rowIndex;
             let rowSubtotal = 0;
-            row.querySelectorAll('.man-day-input').forEach((input, weekIndex) => {
+            row.querySelectorAll('.personday-input').forEach((input, weekIndex) => {
                 const manDayValue = parseFloat(input.value) || 0;
                 rowSubtotal += manDayValue;
                 weeklyTotals[weekIndex] += manDayValue; // Accumulate for weekly total
@@ -687,7 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const rowTotalPrice = rowSubtotal * unitPrice;
             row.querySelector(`#subtotal-${rowIndex}`).textContent = rowSubtotal.toFixed(1);
             row.querySelector(`#total-price-${rowIndex}`).textContent = rowTotalPrice.toFixed(2);
-            grandTotalManDay += rowSubtotal;
+            grandTotalPersonDay += rowSubtotal;
             grandTotalPrice += rowTotalPrice;
         });
 
@@ -700,9 +700,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Update grand totals
-        const grandSubtotalManDayCell = document.getElementById('grand-subtotal-manday-total');
-        if (grandSubtotalManDayCell) {
-            grandSubtotalManDayCell.textContent = grandTotalManDay.toFixed(1);
+        const grandSubtotalPersonDayCell = document.getElementById('grand-subtotal-personday-total');
+        if (grandSubtotalPersonDayCell) {
+            grandSubtotalPersonDayCell.textContent = grandTotalPersonDay.toFixed(1);
         }
         const grandTotalPriceCell = document.getElementById('grand-total-price-total');
         if (grandTotalPriceCell) {
@@ -732,7 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         tableContainer.addEventListener('input', (event) => {
             const target = event.target;
-            if (target.classList.contains('man-day-input') || target.classList.contains('unit-price-input') || target.classList.contains('remarks-input') || target.classList.contains('custom-resource-input')) {
+            if (target.classList.contains('personday-input') || target.classList.contains('unit-price-input') || target.classList.contains('remarks-input') || target.classList.contains('custom-resource-input')) {
                 updateTotals();
                 saveTableData();
             }
