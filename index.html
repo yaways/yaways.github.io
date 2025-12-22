@@ -9,11 +9,11 @@
 </head>
 <body>
 
-    <h1>人天费用评估工具v1.1</h1>
+    <h1>人天费用评估工具</h1>
 
     <div class="controls">
         <label for="projectYear">项目年份:</label>
-        <input type="number" id="projectYear" value="2025">
+        <input type="number" id="projectYear" value="2025" min="2020" max="2030" placeholder="2025">
 
         <label for="startMonth">项目启动月份:</label>
         <select id="startMonth">
@@ -32,11 +32,28 @@
         </select>
 
         <label for="projectDuration">项目周期 (月):</label>
-        <input type="number" id="projectDuration" value="6" min="1">
+        <input type="number" id="projectDuration" value="6" min="1" max="36" placeholder="6">
 
         <button id="generateTableBtn">生成/更新表格</button>
         <button id="addRowBtn">添加资源行</button>
         <button id="exportBtn">导出为 Excel</button>
+        <div class="theme-button-wrapper">
+            <button id="theme-toggle-btn" class="theme-button" aria-label="切换主题">
+                <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+                <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="language-button-wrapper">
+            <button id="language-toggle-btn" class="language-button" aria-label="切换语言">
+                <span class="language-text zh-text">ZH</span>
+                <span class="language-text en-text">EN</span>
+            </button>
+        </div>
     </div>
     <div class="date-picker-controls">
         <div class="date-picker-group">

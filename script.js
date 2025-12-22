@@ -1,15 +1,325 @@
 console.log('script.js loaded');
 
+// 语言配置对象
+const translations = {
+    zh: {
+        // HTML元素
+        pageTitle: "人天费用评估工具",
+        mainTitle: "人天费用评估工具",
+        projectYear: "项目年份:",
+        startMonth: "项目启动月份:",
+        projectDuration: "项目周期 (月):",
+        generateTable: "生成/更新表格",
+        addRow: "添加资源行",
+        exportExcel: "导出为 Excel",
+        holidays: "法定节假日:",
+        workdays: "调休工作日:",
+        holidaysPlaceholder: "点击选择节假日",
+        workdaysPlaceholder: "点击选择调休工作日",
+        months: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+
+        // 表格相关
+        consultantResource: "顾问资源",
+        subtotal: "小计 (人天)",
+        unitPrice: "单价",
+        totalPrice: "总价",
+        remarks: "备注",
+        grandTotal: "总计",
+        weekPrefix: "W",
+        days: "天",
+
+        // 顾问类型
+        resources: {
+            "FICO顾问": "FICO顾问",
+            "PP顾问": "PP顾问",
+            "MM顾问": "MM顾问",
+            "SD顾问": "SD顾问",
+            "HR顾问": "HR顾问",
+            "ABAP顾问": "ABAP顾问",
+            "BASIS顾问": "BASIS顾问",
+            "自定义": "自定义"
+        },
+        customResourcePlaceholder: "输入顾问类型",
+
+        // 提示信息
+        alerts: {
+            invalidInput: "请输入有效的项目年份、启动月份和项目周期！",
+            noTable: "请先生成表格！",
+            dateConflict: "检测到日期冲突: {dates} 同时存在于节假日和调休工作日中，请检查并修正！"
+        },
+        notifications: {
+            regenerateTable: "日期已更新，请点击 <strong>生成/更新表格</strong> 按钮重新计算工作日！",
+            adjustResource: "已添加新的资源行，请根据实际需求调整 <strong>顾问资源类型</strong> 和 <strong>单价</strong>！"
+        },
+
+        // Excel导出
+        excel: {
+            worksheetName: "人天费用评估",
+            holidaysRemark: "法定节假日: ",
+            workdaysRemark: "调休工作日: ",
+            generalRemark: "备注：",
+            filename: "人天费用评估.xlsx"
+        }
+    },
+    en: {
+        // HTML元素
+        pageTitle: "Man-Day Cost Assessment Tool",
+        mainTitle: "Man-Day Cost Assessment Tool",
+        projectYear: "Project Year:",
+        startMonth: "Start Month:",
+        projectDuration: "Duration (months):",
+        generateTable: "Generate/Update Table",
+        addRow: "Add Resource Row",
+        exportExcel: "Export to Excel",
+        holidays: "Legal Holidays:",
+        workdays: "Adjusted Workdays:",
+        holidaysPlaceholder: "Click to select holidays",
+        workdaysPlaceholder: "Click to select adjusted workdays",
+        months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+
+        // 表格相关
+        consultantResource: "Consultant Resources",
+        subtotal: "Subtotal (Man-Days)",
+        unitPrice: "Unit Price",
+        totalPrice: "Total Price",
+        remarks: "Remarks",
+        grandTotal: "Grand Total",
+        weekPrefix: "W",
+        days: "days",
+
+        // 顾问类型
+        resources: {
+            "FICO顾问": "FICO Consultant",
+            "PP顾问": "PP Consultant",
+            "MM顾问": "MM Consultant",
+            "SD顾问": "SD Consultant",
+            "HR顾问": "HR Consultant",
+            "ABAP顾问": "ABAP Consultant",
+            "BASIS顾问": "BASIS Consultant",
+            "自定义": "Custom"
+        },
+        customResourcePlaceholder: "Enter consultant type",
+
+        // 提示信息
+        alerts: {
+            invalidInput: "Please enter valid project year, start month, and duration!",
+            noTable: "Please generate the table first!",
+            dateConflict: "Date conflict detected: {dates} exists in both holidays and adjusted workdays. Please check and correct!"
+        },
+        notifications: {
+            regenerateTable: "Dates updated, please click <strong>Generate/Update Table</strong> button to recalculate working days!",
+            adjustResource: "New resource row added, please adjust <strong>consultant type</strong> and <strong>unit price</strong> according to actual needs!"
+        },
+
+        // Excel导出
+        excel: {
+            worksheetName: "Man-Day Cost Assessment",
+            holidaysRemark: "Legal Holidays: ",
+            workdaysRemark: "Adjusted Workdays: ",
+            generalRemark: "Remarks:",
+            filename: "Man-Day_Cost_Assessment.xlsx"
+        }
+    }
+};
+
+// 语言管理器类
+class LanguageManager {
+    constructor() {
+        this.currentLanguage = localStorage.getItem('language') || 'zh';
+        this.translations = translations;
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+        this.applyLanguage(this.currentLanguage);
+    }
+
+    bindEvents() {
+        const langToggleBtn = document.getElementById('language-toggle-btn');
+        if (langToggleBtn) {
+            langToggleBtn.addEventListener('click', () => this.toggleLanguage());
+        }
+    }
+
+    toggleLanguage() {
+        const newLanguage = this.currentLanguage === 'zh' ? 'en' : 'zh';
+        this.applyLanguage(newLanguage);
+        localStorage.setItem('language', newLanguage);
+        this.currentLanguage = newLanguage;
+    }
+
+    applyLanguage(language) {
+        document.documentElement.setAttribute('data-language', language);
+        document.documentElement.setAttribute('lang', language === 'zh' ? 'zh-CN' : 'en-US');
+        this.updatePageTitle(language);
+        this.updateMainTitle(language);
+        this.updateFormLabels(language);
+        this.updateButtons(language);
+        this.updateDatePickers(language);
+        this.updateMonthOptions(language);
+
+        // 重新生成表格以应用新的语言设置
+        if (hasTableBeenGenerated && window.generateTable && typeof window.generateTable === 'function') {
+            const tableExists = document.querySelector('#tableContainer table');
+            if (tableExists) {
+                // 更新languageManager的当前语言，确保generateTable使用正确的语言
+                if (languageManager) {
+                    languageManager.currentLanguage = language;
+                }
+                window.generateTable();
+            }
+        }
+    }
+
+    updatePageTitle(language) {
+        document.title = this.translations[language].pageTitle;
+    }
+
+    updateMainTitle(language) {
+        const h1 = document.querySelector('h1');
+        if (h1) h1.textContent = this.translations[language].mainTitle;
+    }
+
+    updateFormLabels(language) {
+        const labels = {
+            'projectYear': this.translations[language].projectYear,
+            'startMonth': this.translations[language].startMonth,
+            'projectDuration': this.translations[language].projectDuration,
+            'holidays-picker': this.translations[language].holidays,
+            'workdays-picker': this.translations[language].workdays
+        };
+
+        Object.keys(labels).forEach(id => {
+            const label = document.querySelector(`label[for="${id}"]`);
+            if (label) label.textContent = labels[id];
+        });
+    }
+
+    updateButtons(language) {
+        const buttons = {
+            'generateTableBtn': this.translations[language].generateTable,
+            'addRowBtn': this.translations[language].addRow,
+            'exportBtn': this.translations[language].exportExcel
+        };
+
+        Object.keys(buttons).forEach(id => {
+            const button = document.getElementById(id);
+            if (button) button.textContent = buttons[id];
+        });
+    }
+
+    updateDatePickers(language) {
+        const holidaysPicker = document.getElementById('holidays-picker');
+        const workdaysPicker = document.getElementById('workdays-picker');
+
+        if (holidaysPicker) holidaysPicker.placeholder = this.translations[language].holidaysPlaceholder;
+        if (workdaysPicker) workdaysPicker.placeholder = this.translations[language].workdaysPlaceholder;
+    }
+
+    updateMonthOptions(language) {
+        const startMonth = document.getElementById('startMonth');
+        if (startMonth) {
+            const options = startMonth.querySelectorAll('option');
+            options.forEach((option, index) => {
+                if (this.translations[language].months[index]) {
+                    option.textContent = this.translations[language].months[index];
+                }
+            });
+        }
+    }
+
+    // 获取当前语言的翻译文本
+    getTranslation(key) {
+        const keys = key.split('.');
+        let result = this.translations[this.currentLanguage];
+        for (const k of keys) {
+            if (result && result[k]) {
+                result = result[k];
+            } else {
+                return key; // 如果找不到翻译，返回原始key
+            }
+        }
+        return result;
+    }
+}
+
+// 全局语言管理器实例
+let languageManager;
+
+// 表格生成状态标记
+let hasTableBeenGenerated = false;
+
 // --- State for selected dates ---
 let holidaysSet = new Set();
 let workdaysSet = new Set();
 let allWeeksDataGlobal = []; // Store week data globally
 let currentTableResources = []; // Global variable to store current table resources
 
+// 检查日期冲突的函数
+function checkDateConflicts() {
+    const conflicts = [];
+    holidaysSet.forEach(holiday => {
+        if (workdaysSet.has(holiday)) {
+            conflicts.push(holiday);
+        }
+    });
+    return conflicts;
+}
+
+// 显示日期冲突警告的函数
+function showConflictWarning(conflicts) {
+    // 如果没有冲突，隐藏现有的警告
+    if (conflicts.length === 0) {
+        const existingWarning = document.getElementById('date-conflict-warning');
+        if (existingWarning) {
+            existingWarning.style.display = 'none';
+        }
+        return;
+    }
+
+    const conflictDates = conflicts.join('、');
+    const message = languageManager ?
+        languageManager.getTranslation('alerts.dateConflict').replace('{dates}', conflictDates) :
+        `检测到日期冲突: ${conflictDates} 同时存在于节假日和调休工作日中，请检查并修正！`;
+
+    // 创建或更新警告通知
+    let warning = document.getElementById('date-conflict-warning');
+    if (!warning) {
+        warning = document.createElement('div');
+        warning.id = 'date-conflict-warning';
+        warning.className = 'notification warning';
+        // 插入到日期选择器控件之前
+        document.querySelector('.date-picker-controls').before(warning);
+    }
+
+    warning.innerHTML = `
+        <span class="notification-message">${message}</span>
+        <span class="close-notification">&times;</span>
+    `;
+    warning.style.display = 'flex';
+
+    // 绑定关闭事件
+    const closeBtn = warning.querySelector('.close-notification');
+    if (closeBtn) {
+        closeBtn.onclick = function() {
+            warning.style.display = 'none';
+        };
+    }
+
+    // 5秒后自动隐藏警告
+    setTimeout(() => {
+        if (warning) warning.style.display = 'none';
+    }, 5000);
+}
+
 // --- Date Picker Management ---
 // Removed setupDatePicker function
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 初始化语言管理器
+    languageManager = new LanguageManager();
+
     const projectYearInput = document.getElementById('projectYear');
     const startMonthInput = document.getElementById('startMonth');
     const projectDurationInput = document.getElementById('projectDuration');
@@ -26,12 +336,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportBtn = document.getElementById('exportBtn');
     const tableContainer = document.getElementById('tableContainer');
 
+    // 资源类型配置 - 使用内部键值
+    const resourceTypes = [
+        { key: 'fico', zh: 'FICO顾问', en: 'FICO Consultant' },
+        { key: 'pp', zh: 'PP顾问', en: 'PP Consultant' },
+        { key: 'mm', zh: 'MM顾问', en: 'MM Consultant' },
+        { key: 'sd', zh: 'SD顾问', en: 'SD Consultant' },
+        { key: 'hr', zh: 'HR顾问', en: 'HR Consultant' },
+        { key: 'abap', zh: 'ABAP顾问', en: 'ABAP Consultant' },
+        { key: 'basis', zh: 'BASIS顾问', en: 'BASIS Consultant' },
+        { key: 'custom', zh: '自定义', en: 'Custom' }
+    ];
+
     const resourceOptions = [
         "FICO顾问", "PP顾问", "MM顾问", "SD顾问", "HR顾问", "ABAP顾问", "BASIS顾问", "自定义"
     ];
     const defaultResources = [
         "FICO顾问", "PP顾问", "MM顾问", "SD顾问", "HR顾问", "ABAP顾问", "ABAP顾问", "BASIS顾问"
     ];
+
+    // 获取当前语言的顾问类型选项
+    function getResourceOptions() {
+        if (!languageManager) return resourceOptions;
+        return resourceOptions.map(option => languageManager.getTranslation(`resources.${option}`));
+    }
+
+    // 根据资源键值和当前语言获取显示名称
+    function getResourceDisplayName(key) {
+        if (!languageManager) {
+            // 默认返回中文名称
+            const resource = resourceTypes.find(r => r.key === key);
+            return resource ? resource.zh : key;
+        }
+
+        const currentLanguage = languageManager.currentLanguage;
+        const resource = resourceTypes.find(r => r.key === key);
+        return resource ? resource[currentLanguage] : key;
+    }
+
+    // 根据显示名称获取资源键值
+    function getResourceKey(displayName) {
+        // First check if displayName is already a valid key
+        const isValidKey = resourceTypes.some(r => r.key === displayName);
+        if (isValidKey) {
+            return displayName;
+        }
+
+        // Then try to find by display name
+        const resource = resourceTypes.find(r => r.zh === displayName || r.en === displayName);
+        return resource ? resource.key : 'fico'; // 默认为fico
+    }
+
+    // 获取当前语言的默认资源
+    function getDefaultResources() {
+        if (!languageManager) return defaultResources;
+        return defaultResources.map(resource => languageManager.getTranslation(`resources.${resource}`));
+    }
 
 
     function updateDateList(dateSet, listElement) {
@@ -74,8 +434,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const holidays = holidaysSet;
         const workdays = workdaysSet;
 
-        if (isNaN(year) || isNaN(startMonth) || isNaN(duration) || duration < 1) {
-            alert("请输入有效的项目年份、启动月份和项目周期！");
+        // 验证项目年份
+        if (isNaN(year) || year < 2020 || year > 2030) {
+            alert(languageManager ?
+                languageManager.getTranslation('alerts.invalidInput').replace('项目年份、启动月份和项目周期', '项目年份(2020-2030)') :
+                "请输入有效的项目年份(2020-2030)！");
+            projectYearInput.focus();
+            validateProjectYear(projectYearInput);
+            return;
+        }
+
+        // 验证项目周期
+        if (isNaN(duration) || duration < 1 || duration > 36) {
+            alert(languageManager ?
+                languageManager.getTranslation('alerts.invalidInput').replace('项目年份、启动月份和项目周期', '项目周期(1-36个月)') :
+                "请输入有效的项目周期(1-36个月)！");
+            projectDurationInput.focus();
+            validateProjectDuration(projectDurationInput);
+            return;
+        }
+
+        // 验证启动月份
+        if (isNaN(startMonth)) {
+            alert(languageManager ?
+                languageManager.getTranslation('alerts.invalidInput').replace('项目年份、启动月份和项目周期', '启动月份') :
+                "请输入有效的启动月份！");
+            startMonthInput.focus();
             return;
         }
 
@@ -89,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const remarksInput = row.querySelector('.remarks-input');
 
             const resource = {
-                type: selectElement ? selectElement.value : '',
+                type: selectElement ? selectElement.value : 'fico', // 使用资源键值而不是显示名称
                 customType: customInput ? customInput.value : '',
                 manDays: Array.from(manDayInputs).map(input => input.value),
                 unitPrice: unitPriceInput ? unitPriceInput.value : '',
@@ -97,23 +481,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 isCustomVisible: customInput ? customInput.style.display === 'block' : false
             };
 
-            // If custom input is visible, ensure resource type is '自定义'
+            // If custom input is visible, ensure resource type is 'custom'
             if (resource.isCustomVisible) {
-                resource.type = '自定义';
+                resource.type = 'custom';
             }
             currentTableResources.push(resource);
         });
 
         // If no resources are loaded or present, initialize with default
         if (currentTableResources.length === 0) {
-            currentTableResources = defaultResources.map(name => ({
-                type: name,
-                customType: '',
-                manDays: [],
-                unitPrice: '3000',
-                remarks: '',
-                isCustomVisible: false
-            }));
+            // 使用资源键值初始化默认资源
+            currentTableResources = [
+                { type: 'fico', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'pp', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'mm', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'sd', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'hr', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'abap', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'abap', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'basis', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false }
+            ];
         }
 
         let tableHTML = '<table border="1"><thead>';
@@ -163,12 +550,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Generate Week Headers
         allWeeksData.forEach(weekInfo => {
-            weekHeaders += `<th scope="col" class="weekly-header">W${weekInfo.week}<br>(${weekInfo.displayRange})<br>${weekInfo.workingDays}天</th>`;
+            const weekPrefix = languageManager ? languageManager.getTranslation('weekPrefix') : 'W';
+            const daysText = languageManager ? languageManager.getTranslation('days') : '天';
+            weekHeaders += `<th scope="col" class="weekly-header">${weekPrefix}${weekInfo.week}<br>(${weekInfo.displayRange})<br>${weekInfo.workingDays}${daysText}</th>`;
         });
 
         // Add headers for calculation columns
-        const calculationHeaders = '<th scope="col" rowspan="2">小计 (人天)</th><th scope="col" rowspan="2">单价</th><th scope="col" rowspan="2">总价</th><th scope="col" rowspan="2">备注</th>';
-        tableHTML += `<tr><th scope="col" rowspan="2">顾问资源</th>${weekHeaders}${calculationHeaders}</tr>`;
+        const calculationHeaders = languageManager ?
+            `<th scope="col" rowspan="2">${languageManager.getTranslation('subtotal')}</th><th scope="col" rowspan="2">${languageManager.getTranslation('unitPrice')}</th><th scope="col" rowspan="2">${languageManager.getTranslation('totalPrice')}</th><th scope="col" rowspan="2">${languageManager.getTranslation('remarks')}</th>` :
+            '<th scope="col" rowspan="2">小计 (人天)</th><th scope="col" rowspan="2">单价</th><th scope="col" rowspan="2">总价</th><th scope="col" rowspan="2">备注</th>';
+
+        const consultantHeader = languageManager ? languageManager.getTranslation('consultantResource') : '顾问资源';
+        tableHTML += `<tr><th scope="col" rowspan="2">${consultantHeader}</th>${weekHeaders}${calculationHeaders}</tr>`;
         tableHTML += `</thead><tbody>`;
 
         // Generate rows based on currentTableResources
@@ -176,7 +569,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tableHTML += generateResourceRow(rowIndex, resource.type, totalWeeks, allWeeksDataGlobal, resource);
         });
 
-        tableHTML += `<tr><td class="sticky-total-cell"><strong>总计</strong></td>`; // First cell for "总计"
+        const grandTotalText = languageManager ? languageManager.getTranslation('grandTotal') : '总计';
+        tableHTML += `<tr><td class="sticky-total-cell"><strong>${grandTotalText}</strong></td>`; // First cell for "总计"
         // Loop for weekly totals
         for (let j = 0; j < totalWeeks; j++) {
             tableHTML += `<td class="grand-total-week-manday" id="grand-total-week-${j}">0</td>`;
@@ -190,16 +584,34 @@ document.addEventListener('DOMContentLoaded', () => {
         tableContainer.innerHTML = tableHTML;
         setupEventListeners();
         updateTotals();
+
+        // 设置表格已生成标记
+        hasTableBeenGenerated = true;
     }
 
-    function generateResourceRow(rowIndex, initialResourceName, totalWeeks, allWeeksData = null, resourceData = null) {
+    // 将generateTable函数暴露到全局window对象
+    window.generateTable = generateTable;
+
+    function generateResourceRow(rowIndex, initialResourceKey, totalWeeks, allWeeksData = null, resourceData = null) {
         let rowHTML = `<tr data-row-index="${rowIndex}">`;
+
+        // 获取当前语言的资源选项
+        const customPlaceholder = languageManager ? languageManager.getTranslation('customResourcePlaceholder') : '输入顾问类型';
+
+        // 生成资源选项，使用键值作为option的value
+        let resourceOptionsHTML = '';
+        resourceTypes.forEach(resource => {
+            const displayName = getResourceDisplayName(resource.key);
+            const isSelected = initialResourceKey === resource.key ? 'selected' : '';
+            resourceOptionsHTML += `<option value="${resource.key}" ${isSelected}>${displayName}</option>`;
+        });
+
         rowHTML += `<td class="phase-bar">
             <button class="delete-row-btn" data-row="${rowIndex}">-</button>
             <select class="resource-select" data-row="${rowIndex}" style="display: ${resourceData && resourceData.isCustomVisible ? 'none' : 'block'};">
-                ${resourceOptions.map(option => `<option value="${option}" ${initialResourceName === option ? 'selected' : ''}>${option}</option>`).join('')}
+                ${resourceOptionsHTML}
             </select>
-            <input type="text" class="custom-resource-input" placeholder="输入顾问类型" data-row="${rowIndex}" style="display: ${resourceData && resourceData.isCustomVisible ? 'block' : 'none'};" value="${resourceData ? resourceData.customType : ''}">
+            <input type="text" class="custom-resource-input" placeholder="${customPlaceholder}" data-row="${rowIndex}" style="display: ${resourceData && resourceData.isCustomVisible ? 'block' : 'none'};" value="${resourceData ? resourceData.customType : ''}">
         </td>`;
 
         for (let j = 0; j < totalWeeks; j++) {
@@ -223,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function addResourceRow() {
         const tableBody = tableContainer.querySelector('tbody');
         if (!tableBody) {
-            alert('请先生成表格！');
+            alert(languageManager ? languageManager.getTranslation('alerts.noTable') : '请先生成表格！');
             return;
         }
         const existingRows = tableBody.querySelectorAll('tr').length;
@@ -232,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Create a new resource object for the added row
         const newResource = {
-            type: resourceOptions[0], // Default to first option
+            type: 'fico', // Default to fico resource key
             customType: '',
             manDays: allWeeksDataGlobal.map(week => week.workingDays), // Initialize manDays with calculated workingDays
             unitPrice: '3000',
@@ -300,11 +712,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleResourceChange(event) {
         const selectElement = event.target;
-        const selectedValue = selectElement.value;
+        const selectedValue = selectElement.value; // 这现在是资源键值
         const rowIndex = selectElement.dataset.row;
         const customInput = tableContainer.querySelector(`.custom-resource-input[data-row="${rowIndex}"]`);
         if (customInput) {
-            if (selectedValue === '自定义') {
+            // 检查是否选择了自定义资源键值
+            if (selectedValue === 'custom') {
                 customInput.style.display = 'block';
                 selectElement.style.display = 'none';
                 customInput.focus();
@@ -373,8 +786,21 @@ document.addEventListener('DOMContentLoaded', () => {
             workdaysSet.clear(); // Clear existing set
             (tableData.workdays || []).forEach(date => workdaysSet.add(date));
 
-            // Load resources
-            currentTableResources = tableData.resources || [];
+            // Load resources and ensure they use resource keys
+            if (tableData.resources) {
+                currentTableResources = tableData.resources.map(resource => {
+                    // Ensure the resource has a valid type key
+                    // Check if the resource.type is already a valid key
+                    const isValidKey = resourceTypes.some(r => r.key === resource.type);
+                    if (!isValidKey) {
+                        // Try to convert display name to key if possible
+                        resource.type = getResourceKey(resource.type);
+                    }
+                    return resource;
+                });
+            } else {
+                currentTableResources = [];
+            }
 
             // Set Flatpickr dates from loaded data
             holidaysPicker._flatpickr.setDate(Array.from(holidaysSet), true);
@@ -389,26 +815,30 @@ document.addEventListener('DOMContentLoaded', () => {
             projectYearInput.value = currentDate.getFullYear();
             startMonthInput.value = currentDate.getMonth() + 1;
             projectDurationInput.value = 1;
-            currentTableResources = defaultResources.map(name => ({ // Initialize with default resources
-                type: name,
-                customType: '',
-                manDays: [],
-                unitPrice: '3000',
-                remarks: '',
-                isCustomVisible: false
-            }));
+            // 使用资源键值初始化默认资源
+            currentTableResources = [
+                { type: 'fico', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'pp', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'mm', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'sd', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'hr', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'abap', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'abap', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false },
+                { type: 'basis', customType: '', manDays: [], unitPrice: '3000', remarks: '', isCustomVisible: false }
+            ];
         }
     }
 
     async function exportToExcel() {
         const table = tableContainer.querySelector('table');
         if (!table) {
-            alert('请先生成表格！');
+            alert(languageManager ? languageManager.getTranslation('alerts.noTable') : '请先生成表格！');
             return;
         }
 
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('人天费用评估');
+        const worksheetName = languageManager ? languageManager.getTranslation('excel.worksheetName') : '人天费用评估';
+        const worksheet = workbook.addWorksheet(worksheetName);
 
         // --- 1. Define Reusable Styles ---
         const thinBorder = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
@@ -434,15 +864,23 @@ document.addEventListener('DOMContentLoaded', () => {
         headerRow1.height = 20;
         headerRow2.height = 40;
 
-        const headerTexts1 = ['顾问资源'];
+        const consultantHeader = languageManager ? languageManager.getTranslation('consultantResource') : '顾问资源';
+        const headerTexts1 = [consultantHeader];
         const headerTexts2 = [null];
         allWeeksDataGlobal.forEach(weekInfo => {
-            headerTexts1.push(`W${weekInfo.week}`);
+            const weekPrefix = languageManager ? languageManager.getTranslation('weekPrefix') : 'W';
+            const daysText = languageManager ? languageManager.getTranslation('days') : '天';
+            headerTexts1.push(`${weekPrefix}${weekInfo.week}`);
             const displayRange = weekInfo.displayRange.replace(/&#x200B;/g, '');
             headerTexts2.push(`(${displayRange})
-${weekInfo.workingDays}天`);
+${weekInfo.workingDays}${daysText}`);
         });
-        const calcHeaders = ['小计 (人天)', '单价', '总价', '备注'];
+
+        const subtotalText = languageManager ? languageManager.getTranslation('subtotal') : '小计 (人天)';
+        const unitPriceText = languageManager ? languageManager.getTranslation('unitPrice') : '单价';
+        const totalPriceText = languageManager ? languageManager.getTranslation('totalPrice') : '总价';
+        const remarksText = languageManager ? languageManager.getTranslation('remarks') : '备注';
+        const calcHeaders = [subtotalText, unitPriceText, totalPriceText, remarksText];
         calcHeaders.forEach(text => {
             headerTexts1.push(text);
             headerTexts2.push(null);
@@ -469,7 +907,8 @@ ${weekInfo.workingDays}天`);
         const bodyRows = table.querySelectorAll('tbody tr');
         bodyRows.forEach((row, rowIndex) => {
             const currentRow = worksheet.getRow(rowIndex + 3);
-            const isTotalRow = row.querySelector('strong') && row.querySelector('strong').innerText === '总计';
+            const grandTotalText = languageManager ? languageManager.getTranslation('grandTotal') : '总计';
+            const isTotalRow = row.querySelector('strong') && row.querySelector('strong').innerText === grandTotalText;
 
             row.querySelectorAll('td').forEach((cell, cellIndex) => {
                 const currentCell = currentRow.getCell(cellIndex + 1);
@@ -483,9 +922,10 @@ ${weekInfo.workingDays}天`);
                     if (customInput && customInput.style.display === 'block') {
                         value = customInput.value.trim();
                     } else if (resourceSelect) {
-                        value = resourceSelect.value;
+                        // Convert resource key to display name
+                        value = getResourceDisplayName(resourceSelect.value);
                     } else {
-                        value = cell.innerText.trim(); // For "总计" row
+                        value = cell.innerText.trim(); // For "Grand Total" row
                     }
                 } else if (input) {
                     if (input.tagName === 'SELECT') {
@@ -534,24 +974,27 @@ ${weekInfo.workingDays}天`);
         const holidaysText = Array.from(holidaysSet).sort().join('、');
         const workdaysText = Array.from(workdaysSet).sort().join('、');
 
-        // Add "备注：" header
+        // Add general remarks header
+        const generalRemarkText = languageManager ? languageManager.getTranslation('excel.generalRemark') : '备注：';
         const generalRemarksCell = worksheet.getCell(`A${remarksRowIndex - 1}`);
-        generalRemarksCell.value = '备注：';
+        generalRemarksCell.value = generalRemarkText;
         generalRemarksCell.font = { bold: true };
         generalRemarksCell.alignment = { wrapText: true };
         worksheet.mergeCells(`A${remarksRowIndex - 1}:F${remarksRowIndex - 1}`);
 
         if (holidaysText) {
+            const holidaysRemarkText = languageManager ? languageManager.getTranslation('excel.holidaysRemark') : '法定节假日: ';
             const holidaysRemarkCell = worksheet.getCell(`A${remarksRowIndex}`);
-            holidaysRemarkCell.value = `法定节假日: ${holidaysText}`;
+            holidaysRemarkCell.value = `${holidaysRemarkText}${holidaysText}`;
             holidaysRemarkCell.font = { bold: true };
             holidaysRemarkCell.alignment = { wrapText: true };
             worksheet.mergeCells(`A${remarksRowIndex}:F${remarksRowIndex}`); // Merge across several columns
         }
 
         if (workdaysText) {
+            const workdaysRemarkText = languageManager ? languageManager.getTranslation('excel.workdaysRemark') : '调休工作日: ';
             const workdaysRemarkCell = worksheet.getCell(`A${remarksRowIndex + (holidaysText ? 1 : 0)}`);
-            workdaysRemarkCell.value = `调休工作日: ${workdaysText}`;
+            workdaysRemarkCell.value = `${workdaysRemarkText}${workdaysText}`;
             workdaysRemarkCell.font = { bold: true };
             workdaysRemarkCell.alignment = { wrapText: true };
             worksheet.mergeCells(`A${remarksRowIndex + (holidaysText ? 1 : 0)}:F${remarksRowIndex + (holidaysText ? 1 : 0)}`); // Merge across several columns
@@ -559,7 +1002,8 @@ ${weekInfo.workingDays}天`);
 
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        saveAs(blob, '人天费用评估.xlsx');
+        const filename = languageManager ? languageManager.getTranslation('excel.filename') : '人天费用评估.xlsx';
+        saveAs(blob, filename);
     }
 
     // --- Initial Setup ---
@@ -594,9 +1038,6 @@ ${weekInfo.workingDays}天`);
                 notification = document.createElement('div');
                 notification.id = 'regenerate-notification';
                 notification.className = 'notification';
-                
-                // 直接设置通知内容
-                notification.innerHTML = '<span class="notification-message">日期已更新，请点击 <strong>生成/更新表格</strong> 按钮重新计算工作日！</span>';
 
                 // 添加关闭按钮
                 const closeBtn = document.createElement('span');
@@ -609,10 +1050,23 @@ ${weekInfo.workingDays}天`);
 
                 // 插入到表格容器前面
                 tableContainer.parentNode.insertBefore(notification, tableContainer);
-            } else {
-                // 如果通知已存在，确保它是可见的
-                notification.style.display = 'block';
             }
+
+            // 更新通知内容以匹配当前语言
+            const message = languageManager ? languageManager.getTranslation('notifications.regenerateTable') : '日期已更新，请点击 <strong>生成/更新表格</strong> 按钮重新计算工作日！';
+            notification.innerHTML = `<span class="notification-message">${message}</span>`;
+
+            // 添加关闭按钮（在更新内容后重新添加）
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'close-notification';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.onclick = function () {
+                notification.style.display = 'none';
+            };
+            notification.appendChild(closeBtn);
+
+            // 确保通知是可见的
+            notification.style.display = 'block';
 
             // 高亮生成表格按钮
             generateTableBtn.classList.add('highlight-button');
@@ -633,10 +1087,7 @@ ${weekInfo.workingDays}天`);
             notification = document.createElement('div');
             notification.id = 'adjust-resource-notification';
             notification.className = 'notification';
-            
-            // 直接设置通知内容
-            notification.innerHTML = '<span class="notification-message">已添加新的资源行，请根据实际需求调整 <strong>顾问资源类型</strong> 和 <strong>单价</strong>！</span>';
-            
+
             // 添加关闭按钮
             const closeBtn = document.createElement('span');
             closeBtn.className = 'close-notification';
@@ -645,14 +1096,27 @@ ${weekInfo.workingDays}天`);
                 notification.style.display = 'none';
             };
             notification.appendChild(closeBtn);
-            
+
             // 插入到表格容器前面
             tableContainer.parentNode.insertBefore(notification, tableContainer);
-        } else {
-            // 如果通知已存在，确保它是可见的
-            notification.style.display = 'block';
         }
-        
+
+        // 更新通知内容以匹配当前语言
+        const message = languageManager ? languageManager.getTranslation('notifications.adjustResource') : '已添加新的资源行，请根据实际需求调整 <strong>顾问资源类型</strong> 和 <strong>单价</strong>！';
+        notification.innerHTML = `<span class="notification-message">${message}</span>`;
+
+        // 添加关闭按钮（在更新内容后重新添加）
+        const closeBtn = document.createElement('span');
+        closeBtn.className = 'close-notification';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.onclick = function() {
+            notification.style.display = 'none';
+        };
+        notification.appendChild(closeBtn);
+
+        // 确保通知是可见的
+        notification.style.display = 'block';
+
         // 4秒后自动隐藏通知
         setTimeout(() => {
             if (notification) notification.style.display = 'none';
@@ -669,7 +1133,17 @@ ${weekInfo.workingDays}天`);
             updateDateList(holidaysSet, holidaysList);
             saveTableData();
             adjustInputWidth(holidaysPicker, dateStr); // Adjust width dynamically
-            showRegenerateTableNotification(); // 显示重新生成表格的提示
+
+            // 检查日期冲突
+            const conflicts = checkDateConflicts();
+            showConflictWarning(conflicts);
+
+            // 如果表格已经生成且无冲突，则自动更新表格
+            if (conflicts.length === 0 && hasTableBeenGenerated && typeof window.generateTable === 'function') {
+                window.generateTable();
+            } else if (conflicts.length === 0) {
+                showRegenerateTableNotification(); // 如果表格尚未生成且无冲突，显示提示
+            }
         }
     });
 
@@ -683,7 +1157,17 @@ ${weekInfo.workingDays}天`);
             updateDateList(workdaysSet, workdaysList);
             saveTableData();
             adjustInputWidth(workdaysPicker, dateStr); // Adjust width dynamically
-            showRegenerateTableNotification(); // 显示重新生成表格的提示
+
+            // 检查日期冲突
+            const conflicts = checkDateConflicts();
+            showConflictWarning(conflicts);
+
+            // 如果表格已经生成且无冲突，则自动更新表格
+            if (conflicts.length === 0 && hasTableBeenGenerated && typeof window.generateTable === 'function') {
+                window.generateTable();
+            } else if (conflicts.length === 0) {
+                showRegenerateTableNotification(); // 如果表格尚未生成且无冲突，显示提示
+            }
         }
     });
 
@@ -703,12 +1187,72 @@ ${weekInfo.workingDays}天`);
     addRowBtn.addEventListener('click', addResourceRow);
     exportBtn.addEventListener('click', exportToExcel);
 
+    // 添加实时验证函数
+    function validateProjectYear(input) {
+        const value = parseInt(input.value);
+        if (isNaN(value) || value < 2020 || value > 2030) {
+            input.classList.add('invalid');
+            input.classList.remove('valid');
+        } else {
+            input.classList.add('valid');
+            input.classList.remove('invalid');
+        }
+    }
+
+    function validateProjectDuration(input) {
+        const value = parseInt(input.value);
+        if (isNaN(value) || value < 1 || value > 36) {
+            input.classList.add('invalid');
+            input.classList.remove('valid');
+        } else {
+            input.classList.add('valid');
+            input.classList.remove('invalid');
+        }
+    }
+
+    // 添加输入事件监听器
+    projectYearInput.addEventListener('input', () => validateProjectYear(projectYearInput));
+    projectDurationInput.addEventListener('input', () => validateProjectDuration(projectDurationInput));
+
+    // 在失去焦点时也进行验证
+    projectYearInput.addEventListener('blur', () => validateProjectYear(projectYearInput));
+    projectDurationInput.addEventListener('blur', () => validateProjectDuration(projectDurationInput));
+
     // Auto-save on main control changes
     [projectYearInput, startMonthInput, projectDurationInput].forEach(input => {
         input.addEventListener('change', saveTableData);
     });
 
     loadTableData();
+
+    // ========================================
+    // 主题切换功能 (Theme Toggle Functionality)
+    // ========================================
+
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+
+    // 函数：加载保存的主题
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    // 函数：切换主题
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // 绑定click事件到按钮
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+
+    // 页面加载时应用保存的主题
+    loadTheme();
 });
 
 
