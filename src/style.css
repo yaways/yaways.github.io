@@ -1,31 +1,31 @@
 :root {
     /* 浅色主题变量 */
-    --bg-color: #f8f9fa;
-    --text-color: #343a40;
-    --header-gradient-start: #667eea;
-    --header-gradient-end: #764ba2;
-    --control-bg: #ffffff;
-    --control-border: #ced4da;
-    --control-text: #495057;
-    --button-primary-bg: #007bff;
-    --button-primary-hover: #0056b3;
-    --button-export-bg: #28a745;
-    --button-export-hover: #218838;
-    --table-border: #e0e0e0;
-    --table-header-bg: #E2F0D5;
-    --table-header-border: #A9C4A0;
-    --table-sticky-col-bg: #f8f9fa;
-    --table-even-row-bg: #f9f9f9;
-    --table-total-row-bg: #e9ecef;
-    --input-border: #d1d7dc;
-    --input-focus-shadow: rgba(0, 123, 255, 0.25);
-    --delete-button-bg: #dc3545;
-    --delete-button-hover: #c82333;
-    --notification-bg: #fff3cd;
-    --notification-text: #856404;
-    --notification-border: #ffeeba;
-    --notification-close: #856404;
-    --notification-close-hover: #533f03;
+    --bg-color: #F7F3EF;
+    --text-color: #1C121B;
+    --header-gradient-start: #C2547A;
+    --header-gradient-end: #E8748E;
+    --control-bg: #FFFFFF;
+    --control-border: #E0CDD5;
+    --control-text: #6D5762;
+    --button-primary-bg: #C2547A;
+    --button-primary-hover: #A84468;
+    --button-export-bg: #C2547A;
+    --button-export-hover: #A84468;
+    --table-border: #E0CDD5;
+    --table-header-bg: #FDF5F7;
+    --table-header-border: #E0CDD5;
+    --table-sticky-col-bg: #F7F3EF;
+    --table-even-row-bg: #FBF8F5;
+    --table-total-row-bg: #EDE8DF;
+    --input-border: #E0CDD5;
+    --input-focus-shadow: rgba(194, 84, 122, 0.25);
+    --delete-button-bg: #D94452;
+    --delete-button-hover: #B83340;
+    --notification-bg: #FDF5F7;
+    --notification-text: #6D5762;
+    --notification-border: #E0CDD5;
+    --notification-close: #6D5762;
+    --notification-close-hover: #1C121B;
 
     /* 过渡动画 */
     --transition-speed: 0.3s;
@@ -34,32 +34,32 @@
 
 [data-theme="dark"] {
     /* 深色主题变量 */
-    --bg-color: #1a1a1a;
-    --text-color: #f0f0f0;
-    --header-gradient-start: #818cf8;
-    --header-gradient-end: #c084fc;
-    --control-bg: #2d2d2d;
-    --control-border: #4a4a4a;
-    --control-text: #f8f8f8;
-    --button-primary-bg: #60a5fa;
-    --button-primary-hover: #3b82f6;
-    --button-export-bg: #34d399;
-    --button-export-hover: #10b981;
-    --table-border: #4a4a4a;
-    --table-header-bg: #374151;
-    --table-header-border: #4b5563;
-    --table-sticky-col-bg: #2d2d2d;
-    --table-even-row-bg: #252525;
-    --table-total-row-bg: #333333;
-    --input-border: #4a4a4a;
-    --input-focus-shadow: rgba(96, 165, 250, 0.25);
-    --delete-button-bg: #f87171;
-    --delete-button-hover: #ef4444;
-    --notification-bg: #3d3d3d;
-    --notification-text: #f0f0f0;
-    --notification-border: #5a5a5a;
-    --notification-close: #f0f0f0;
-    --notification-close-hover: #ffffff;
+    --bg-color: #1A1219;
+    --text-color: #F0E8EC;
+    --header-gradient-start: #E8748E;
+    --header-gradient-end: #C2547A;
+    --control-bg: #2A2028;
+    --control-border: #4A3A45;
+    --control-text: #E0D0D8;
+    --button-primary-bg: #E8748E;
+    --button-primary-hover: #C2547A;
+    --button-export-bg: #E8748E;
+    --button-export-hover: #C2547A;
+    --table-border: #4A3A45;
+    --table-header-bg: #2A2028;
+    --table-header-border: #4A3A45;
+    --table-sticky-col-bg: #2A2028;
+    --table-even-row-bg: #221A20;
+    --table-total-row-bg: #3A2A35;
+    --input-border: #4A3A45;
+    --input-focus-shadow: rgba(232, 116, 142, 0.25);
+    --delete-button-bg: #F87171;
+    --delete-button-hover: #EF4444;
+    --notification-bg: #2A2028;
+    --notification-text: #F0E8EC;
+    --notification-border: #4A3A45;
+    --notification-close: #F0E8EC;
+    --notification-close-hover: #FFFFFF;
 }
 
 * {
@@ -153,13 +153,13 @@ h1 {
 
 /* 输入框验证状态 */
 .controls input[type="number"].invalid {
-    border-color: #dc3545;
-    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+    border-color: #D94452;
+    box-shadow: 0 0 0 3px rgba(217, 68, 82, 0.25);
 }
 
 .controls input[type="number"].valid {
-    border-color: #28a745;
-    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
+    border-color: #C2547A;
+    box-shadow: 0 0 0 3px rgba(194, 84, 122, 0.25);
 }
 
 /* 占位符文字样式增强 */
@@ -177,19 +177,19 @@ h1 {
     cursor: pointer;
     font-size: 0.95em;
     font-weight: 500;
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(194, 84, 122, 0.3);
     position: relative;
     overflow: hidden;
 }
 
 .controls button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    box-shadow: 0 6px 20px rgba(194, 84, 122, 0.4);
 }
 
 .controls button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 2px 10px rgba(194, 84, 122, 0.3);
 }
 
 
@@ -296,7 +296,7 @@ th:first-child {
 .unit-price-input:focus,
 .remarks-input:focus {
     border-color: var(--button-primary-bg);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(194, 84, 122, 0.25);
     outline: none;
     transform: translateY(-1px);
 }
@@ -366,26 +366,26 @@ tbody tr:nth-child(even) {
 
 .date-picker-group button {
     padding: 8px 15px;
-    background: linear-gradient(135deg, var(--button-export-bg) 0%, var(--button-export-hover) 100%);
+    background: linear-gradient(135deg, var(--button-primary-bg) 0%, var(--button-primary-hover) 100%);
     color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.95em;
     font-weight: 500;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 4px 15px rgba(194, 84, 122, 0.3);
     position: relative;
     overflow: hidden;
 }
 
 .date-picker-group button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    box-shadow: 0 6px 20px rgba(194, 84, 122, 0.4);
 }
 
 .date-picker-group button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 2px 10px rgba(194, 84, 122, 0.3);
 }
 
 .date-list {
@@ -464,7 +464,7 @@ tbody tr:last-child td {
     margin-right: 5px;
     font-size: 0.95em;
     font-weight: 500;
-    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    box-shadow: 0 4px 15px rgba(217, 68, 82, 0.3);
     position: relative;
     overflow: hidden;
     /* Red */
@@ -472,12 +472,12 @@ tbody tr:last-child td {
 
 .delete-row-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    box-shadow: 0 6px 20px rgba(217, 68, 82, 0.4);
 }
 
 .delete-row-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+    box-shadow: 0 2px 10px rgba(217, 68, 82, 0.3);
 }
 
 /* Ensure the resource select and custom input are aligned */
@@ -510,7 +510,7 @@ tbody tr:last-child td:last-child input {
 
 /* 通知样式 */
 .notification {
-    background: linear-gradient(135deg, var(--notification-bg) 0%, #f0e68c 100%);
+    background: linear-gradient(135deg, var(--notification-bg) 0%, #F7E8EC 100%);
     color: var(--notification-text);
     border: 1px solid var(--notification-border);
     border-radius: 8px;
@@ -524,9 +524,9 @@ tbody tr:last-child td:last-child input {
 }
 
 .notification.warning {
-    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-    color: #856404;
-    border: 1px solid #ffeeba;
+    background: linear-gradient(135deg, #FDF5F7 0%, #F7E8EC 100%);
+    color: #8B4A5E;
+    border: 1px solid #E0CDD5;
 }
 
 .notification-message {
@@ -572,21 +572,21 @@ tbody tr:last-child td:last-child input {
 /* 按钮高亮样式 */
 .highlight-button {
     animation: pulse 1.5s infinite;
-    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+    box-shadow: 0 0 0 0 rgba(194, 84, 122, 0.7);
     transform: scale(1.02);
 }
 
 @keyframes pulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+        box-shadow: 0 0 0 0 rgba(194, 84, 122, 0.7);
     }
 
     70% {
-        box-shadow: 0 0 0 12px rgba(0, 123, 255, 0);
+        box-shadow: 0 0 0 12px rgba(194, 84, 122, 0);
     }
 
     100% {
-        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+        box-shadow: 0 0 0 0 rgba(194, 84, 122, 0);
     }
 }
 
@@ -603,19 +603,19 @@ tbody tr:last-child td:last-child input {
     height: 36px;
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    background: linear-gradient(135deg, #C2547A 0%, #E8748E 100%);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(194, 84, 122, 0.3);
     backdrop-filter: blur(5px);
 }
 
 .theme-button:hover {
     transform: scale(1.05) rotate(10deg);
-    box-shadow: 0 6px 15px rgba(255, 215, 0, 0.4);
+    box-shadow: 0 6px 15px rgba(194, 84, 122, 0.4);
     border-color: rgba(255, 255, 255, 0.4);
 }
 
@@ -644,14 +644,14 @@ tbody tr:last-child td:last-child input {
 
 /* 深色主题下的按钮样式 */
 [data-theme="dark"] .theme-button {
-    background: linear-gradient(135deg, #4B0082 0%, #8A2BE2 100%);
-    box-shadow: 0 4px 10px rgba(75, 0, 130, 0.3);
+    background: linear-gradient(135deg, #E8748E 0%, #C2547A 100%);
+    box-shadow: 0 4px 10px rgba(232, 116, 142, 0.3);
     border-color: rgba(255, 255, 255, 0.1);
 }
 
 [data-theme="dark"] .theme-button:hover {
     transform: scale(1.05) rotate(10deg);
-    box-shadow: 0 6px 15px rgba(75, 0, 130, 0.4);
+    box-shadow: 0 6px 15px rgba(232, 116, 142, 0.4);
     border-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -714,13 +714,13 @@ tbody tr:last-child td:last-child input {
     height: 36px;
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    background: linear-gradient(135deg, #C2547A 0%, #A84468 100%);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 4px 10px rgba(194, 84, 122, 0.3);
     backdrop-filter: blur(5px);
     font-weight: bold;
     font-size: 14px;
@@ -730,7 +730,7 @@ tbody tr:last-child td:last-child input {
 
 .language-button:hover {
     transform: scale(1.05) rotate(10deg);
-    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+    box-shadow: 0 6px 15px rgba(194, 84, 122, 0.4);
     border-color: rgba(255, 255, 255, 0.4);
 }
 
@@ -763,14 +763,14 @@ tbody tr:last-child td:last-child input {
 
 /* 深色主题下的语言按钮样式 */
 [data-theme="dark"] .language-button {
-    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+    background: linear-gradient(135deg, #E8748E 0%, #C2547A 100%);
+    box-shadow: 0 4px 10px rgba(232, 116, 142, 0.3);
     border-color: rgba(255, 255, 255, 0.1);
 }
 
 [data-theme="dark"] .language-button:hover {
     transform: scale(1.05) rotate(10deg);
-    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+    box-shadow: 0 6px 15px rgba(232, 116, 142, 0.4);
     border-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -784,9 +784,9 @@ tbody tr:last-child td:last-child input {
 [data-theme="dark"] input[type="text"],
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-    color: #ffffff !important;
-    background-color: #3d3d3d !important;
-    border: 1px solid #5a5a5a !important;
+    color: #F0E8EC !important;
+    background-color: #2A2028 !important;
+    border: 1px solid #4A3A45 !important;
 }
 
 /* 控制区域输入框样式强化 */
@@ -795,9 +795,9 @@ tbody tr:last-child td:last-child input {
 [data-theme="dark"] #projectYear,
 [data-theme="dark"] #startMonth,
 [data-theme="dark"] #projectDuration {
-    color: #ffffff !important;
-    background-color: #3d3d3d !important;
-    border: 1px solid #5a5a5a !important;
+    color: #F0E8EC !important;
+    background-color: #2A2028 !important;
+    border: 1px solid #4A3A45 !important;
 }
 
 /* 表格输入框样式强化 */
@@ -806,18 +806,18 @@ tbody tr:last-child td:last-child input {
 [data-theme="dark"] .remarks-input,
 [data-theme="dark"] .resource-select,
 [data-theme="dark"] .custom-resource-input {
-    color: #ffffff !important;
-    background-color: #3d3d3d !important;
-    border: 1px solid #5a5a5a !important;
+    color: #F0E8EC !important;
+    background-color: #2A2028 !important;
+    border: 1px solid #4A3A45 !important;
 }
 
 /* 日期选择器输入框样式强化 */
 [data-theme="dark"] .date-picker-group input[type="text"],
 [data-theme="dark"] #holidays-picker,
 [data-theme="dark"] #workdays-picker {
-    color: #ffffff !important;
-    background-color: #3d3d3d !important;
-    border: 1px solid #5a5a5a !important;
+    color: #F0E8EC !important;
+    background-color: #2A2028 !important;
+    border: 1px solid #4A3A45 !important;
 }
 
 /* 统一输入框基础样式 */
